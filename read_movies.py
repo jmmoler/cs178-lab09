@@ -32,24 +32,29 @@ def print_movie(movie):
     # adding a comment to test git
 
 
-def get_movie_by_title(title):
-    # Prompt the user to enter the movie title
+def get_movie_by_title():
+    """Prompt the user to enter a movie title and search for it in the DynamoDB table."""
     title = input("Enter the movie title you want to search for: ").strip()
+
+    # Get the table reference using get_table()
+    table = get_table()
 
     # Search for the movie using a FilterExpression
     try:
         response = table.scan(
-            FilterExpression=Attr('title').eq(title)
+            FilterExpression=Attr('Title').eq(title)  # Corrected attribute name (case-sensitive)
         )
 
         # Check if any movies were found
         if response['Items']:
+            print(f"Found movie(s) with the title '{title}':\n")
             for movie in response['Items']:
-                print(movie)
+                print_movie(movie)
         else:
-            print(f"'{title}' not found.")
+            print(f"No movie found with the title '{title}'.")
     except Exception as e:
         print(f"Error fetching movie data: {e}")
+
 
 def new():
     print("This is a new function added to test git branching and merging.")    
