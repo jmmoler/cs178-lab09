@@ -31,6 +31,26 @@ def print_movie(movie):
     print()
     # adding a comment to test git
 
+
+def get_movie_by_title(title):
+    # Prompt the user to enter the movie title
+    title = input("Enter the movie title you want to search for: ").strip()
+
+    # Search for the movie using a FilterExpression
+    try:
+        response = table.scan(
+            FilterExpression=Attr('title').eq(title)
+        )
+
+        # Check if any movies were found
+        if response['Items']:
+            for movie in response['Items']:
+                print(movie)
+        else:
+            print(f"'{title}' not found.")
+    except Exception as e:
+        print(f"Error fetching movie data: {e}")
+
 def new():
     print("This is a new function added to test git branching and merging.")    
 
@@ -56,7 +76,7 @@ def print_all_movies():
 
 def main():
     print("===== Reading from DynamoDB =====\n")
-    print_all_movies()
+    get_movie_by_title()
 
 
 if __name__ == "__main__":
