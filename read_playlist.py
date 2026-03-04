@@ -44,9 +44,9 @@ def print_all_playlist():
         print("No playlists found. Make sure your DynamoDB table has data.")
         return
     
-    print(f"Found {len(items)} movie(s):\n")
-    for movie in items:
-        print_movie(movie)
+    print(f"Found {len(items)} playlist(s):\n")
+    for song in items:
+        print_playlist(song)
 
 
 def main():
