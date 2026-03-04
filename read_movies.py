@@ -3,7 +3,7 @@
 # Part of Lab 09 — feature/read-dynamo branch
 
 import boto3
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 
 # -------------------------------------------------------
 # Configuration — update REGION if your table is elsewhere
@@ -34,26 +34,22 @@ def print_movie(movie):
 
 def get_movie_by_title():
     """Prompt the user to enter a movie title and search for it in the DynamoDB table."""
-    title = input("Enter the movie title you want to search for: ").strip()
+    title = input("Enter the movie title: ").strip()
 
     # Get the table reference using get_table()
     table = get_table()
 
-    # Search for the movie using a FilterExpression
-    try:
-        response = table.scan(
-            FilterExpression=Attr('Title').eq(title)  # Corrected attribute name (case-sensitive)
-        )
+    response = table.scan(
+        FilterExpression=Attr('Title').eq(title)  # Corrected attribute name (case-sensitive)
+    )
 
-        # Check if any movies were found
-        if response['Items']:
-            print(f"Found movie(s) with the title '{title}':\n")
-            for movie in response['Items']:
-                print_movie(movie)
-        else:
-            print(f"No movie found with the title '{title}'.")
-    except Exception as e:
-        print(f"Error fetching movie data: {e}")
+    movies = response.get("Items", [])
+    if movies:
+        print(f"\nFound '{title}':\n")
+        for movie in movies:
+            print_movie(movie)
+    else:
+        print(f"\n'{title}' not found.")
 
 
 def new():
