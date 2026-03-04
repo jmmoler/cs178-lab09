@@ -19,18 +19,18 @@ def get_table():
 
 
 def print_movie(movie):
-    """Print a single movie's details in a readable format."""
     title = movie.get("Title", "Unknown Title")
     year = movie.get("Year", "Unknown Year")
-    
-    # Ratings is a nested map in the table — handle it gracefully
-    ratings = movie.get("Ratings", {})
-    rating_str = ", ".join(f"{k}: {v}" for k, v in ratings.items()) if ratings else "No ratings"
-    
-    print(f"  Title : {title}")
-    print(f"  Year  : {year}")
-    print(f"  Ratings: {rating_str}")
+    ratings = movie.get("Ratings", "No ratings")
+
+    print(f"  Title  : {title}")
+    print(f"  Year   : {year}")
+    print(f"  Ratings: {ratings}")
     print()
+    # adding a comment to test git
+
+def new():
+    print("This is a new function added to test git branching and merging.")    
 
 
 def print_all_movies():
