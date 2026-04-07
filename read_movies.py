@@ -51,6 +51,44 @@ def get_movie_by_title():
     else:
         print(f"\n'{title}' not found.")
 
+def create_movie():
+    """Create a new movie item in the DynamoDB table."""
+    title = input("Enter the movie title: ").strip()
+    year = input("Enter the release year: ").strip()
+    ratings = input("Enter the ratings (comma-separated): ").strip()
+    genre = input("Enter the genre: ").strip()
+
+    # Get the table reference using get_table()
+    table = get_table()
+
+    # Create a new movie item
+    movie_item = {
+        "Title": title,
+        "Year": year,
+        "Ratings": ratings.split(","),
+        "Genre": genre
+    }
+
+    # Put the item into the DynamoDB table
+    table.put_item(Item=movie_item)
+    print(f"\nMovie '{title}' created successfully.")
+
+
+def update_rating():
+    # Get the table reference using get_table()
+    #Use try/except to handle potential errors when updating the item
+
+    table = get_table() 
+    
+
+    title = input("What is the movie title? ")
+    rating = int(input("What is the rating (integer): "))
+    table.update_item(
+        Key={"Title": title},
+        UpdateExpression="SET Ratings = list_append(Ratings, :r)",
+        ExpressionAttributeValues={':r': [rating]}
+    )
+
 
 def new():
     print("This is a new function added to test git branching and merging.")    
@@ -74,6 +112,39 @@ def print_all_movies():
     for movie in items:
         print_movie(movie)
 
+
+def delete_movie():
+    """Delete a movie item from the DynamoDB table based on the title."""
+    title = input("Enter the movie title to delete: ").strip()
+
+    # Get the table reference using get_table()
+    table = get_table()
+
+    # Delete the item from the DynamoDB table
+    response = table.delete_item(
+        Key={"Title": title}
+    )
+
+    if response.get("ResponseMetadata", {}).get("HTTPStatusCode") == 200:
+        print(f"\nMovie '{title}' deleted successfully.")
+    else:
+        print(f"\nFailed to delete movie '{title}'. Please check if it exists.")
+
+def query_movie():
+    # a function that returns the average rating for a given movie.
+    title = input("What is the movie title? ")
+    table = get_table()
+    response = table.get_item(Key={"Title": title})
+    movie = response.get("Item")
+    if movie and "Ratings" in movie:
+        ratings = movie["Ratings"]
+        if ratings:
+            average_rating = sum(ratings) / len(ratings)
+            print(f"\nAverage rating for '{title}': {average_rating:.2f}")
+        else:
+            print(f"\nNo ratings found for '{title}'.")
+    else:
+        print(f"\nMovie '{title}' not found or has no ratings.")
 
 def main():
     print("===== Reading from DynamoDB =====\n")
